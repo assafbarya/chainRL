@@ -6,6 +6,7 @@ from enum import Enum
 class Action( Enum ):
     UP   = 0
     DOWN = 1
+    STAY = 2
 
 class Env:
     ''' Chain game, with nStates states. 0,1,2,..nStates-1
@@ -30,6 +31,11 @@ class Env:
         self.state       = 0
         self.maxState    = nStates - 1
         self.turn        = 0
+
+    def reset( self ):
+        self.state = 0
+        self.nTurns = 0
+        return self.state
 
     def step( self, a ):
         isErr = np.random.rand() < self.errProb
