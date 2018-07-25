@@ -3,10 +3,11 @@ import numpy as np
 import scipy.stats
 from enum import Enum
 
-class Action( Enum ):
-    UP   = 0
-    DOWN = 1
-    #STAY = 2
+#class Action( Enum ):
+#    DOWN = 0
+#    UP   = 1
+
+#    #STAY = 2
 
 class Env:
     ''' Chain game, with nStates states. 0,1,2,..nStates-1
@@ -21,7 +22,7 @@ class Env:
                   nTurns        = 1000,
                   downReward    = 2,
                   finalReward   = 10,
-                  errProb       = 0.4 ):
+                  errProb       = 0.01 ):
         ''' init '''
         self.nStates     = nStates
         self.nTurns      = nTurns
@@ -42,7 +43,7 @@ class Env:
 
     def step( self, a ):
         isErr = np.random.rand() < self.errProb
-        if ( a == Action.UP ) ^ isErr: ## selected action is UP
+        if ( a == 1 ) ^ isErr: ## selected action is UP
             r          = self.finalReward if self.state == self.maxState else 0
             self.state = min( self.maxState, self.state + 1 )
         else:
@@ -74,15 +75,59 @@ class Agent:
             return self.qMat
 
 
+class Agent2:
+    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, epochs = 1000 ):
+        self.env            = env
+        self.discountFactor = discountFactor
+        self.epochs         = epochs
+
+    def learnPolicy( self ):
+        numStates   = self.env.getNumStates()
+        states      = list( range( numStates ) )
+        rSum        = np.zeros( ( numStates, 2, numStates ) ) ## sum of rewards collected
+        transitions = np.zeros( ( numStates, 2, numStates ) ) ## counts transitions
+
+        ## collect rewards information
+        for _ in range( self.epochs ):
+            isDone = False
+            s = self.env.reset()
+            while not isDone:
+                a                        = np.random.randint( 0, 2 )
+                r, sp, isDone            = self.env.step( a )
+                transitions[ s, a, sp ] += 1
+                rSum[ s, a, sp ]        += r
+                s                        = sp
+        r = rSum / transitions 
+        r[np.isnan(r)]=0
+
+        ## calculate transition probability matrtix
+        p = transitions 
+        for s in states:
+            for a in [ 0, 1 ]:
+                sum = transitions[ s, a ].sum()
+                for sp in states:
+                    p[ s, a, sp ] /= sum
+
+        p[np.isnan(p)]=0
+
+        ## calculate q
+        Q = np.zeros( ( numStates, 2 ) )
+        for _ in range( self.epochs  ):
+            newQ = np.zeros( ( numStates, 2 ) )
+            for s in states:
+                for a in [ 0, 1 ]:
+                    for sp in states:
+                        newQ[ s, a ] += p[ s, a, sp ] * ( r[ s, a, sp ] + self.discountFactor * Q[ sp ].max() )
+            Q = newQ
+
+        return Q
 
 
 
 
 def main():
     e = Env()
-    #for _x in range(100):
-    #    print ( e.step( Action.UP ) )
-    agent = Agent( e )
+    agent = Agent2( e )
     print ( agent.learnPolicy() )
 
 
