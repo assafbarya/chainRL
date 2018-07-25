@@ -37,6 +37,9 @@ class Env:
         self.nTurns = 0
         return self.state
 
+    def getNumStates( self ):
+        return self.nStates
+
     def step( self, a ):
         isErr = np.random.rand() < self.errProb
         if ( a == Action.UP ) ^ isErr: ## selected action is UP
@@ -47,9 +50,14 @@ class Env:
             r          = 2
         self.turn += 1
 
-        return ( r, self.state, self.turn )
+        return ( r, self.state, self.turn >= self.nTurns )
 
-        
+class Agent:
+    def __init__( self, env, discountFactor, learningRate ):
+        self.env = env
+        self.  
+
+
 def main():
     e = Env()
     for _x in range(100):
