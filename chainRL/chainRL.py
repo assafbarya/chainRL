@@ -17,7 +17,7 @@ class Env:
         When reaching the final state, the reward for going up is finalReward
     '''
 
-    def __init__( self, nStates = 10,
+    def __init__( self, nStates = 5,
                   nTurns        = 1000,
                   downReward    = 2,
                   finalReward   = 10,
@@ -33,8 +33,8 @@ class Env:
         self.turn        = 0
 
     def reset( self ):
-        self.state = 0
-        self.nTurns = 0
+        self.state  = 0
+        self.turns = 0
         return self.state
 
     def getNumStates( self ):
@@ -53,15 +53,37 @@ class Env:
         return ( r, self.state, self.turn >= self.nTurns )
 
 class Agent:
-    def __init__( self, env, discountFactor, learningRate ):
-        self.env = env
-        self.  
+    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, epochs = 1000 ):
+        self.env            = env
+        self.discountFactor = discountFactor
+        self.learningRate   = learningRate
+        self.epochs         = epochs
+        self.qMat           = np.zeros( ( env.getNumStates(), 2 ) )
+
+    def learnPolicy( self ):
+        for _ in range( self.epochs ):
+            isDone = False
+            s = self.env.reset()
+            while not isDone:
+                a = np.random.randint( 0, 2 )
+                r, newState, isDone = self.env.step( a )
+                self.qMat[ s, a ] = ( 1 - self.learningRate ) * self.qMat[ s, a ] \
+                                    + self.learningRate * ( r + self.discountFactor * self.qMat[ newState ].max() )
+                s = newState
+
+            return self.qMat
+
+
+
+
 
 
 def main():
     e = Env()
-    for _x in range(100):
-        print ( e.step( Action.UP ) )
+    #for _x in range(100):
+    #    print ( e.step( Action.UP ) )
+    agent = Agent( e )
+    print ( agent.learnPolicy() )
 
 
 
