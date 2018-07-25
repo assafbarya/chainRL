@@ -6,7 +6,7 @@ from enum import Enum
 class Action( Enum ):
     UP   = 0
     DOWN = 1
-    STAY = 2
+    #STAY = 2
 
 class Env:
     ''' Chain game, with nStates states. 0,1,2,..nStates-1
