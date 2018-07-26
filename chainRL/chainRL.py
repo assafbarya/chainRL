@@ -22,7 +22,7 @@ class Env:
                   nTurns        = 1000,
                   downReward    = 2,
                   finalReward   = 10,
-                  errProb       = 0.01 ):
+                  errProb       = 0.4 ):
         ''' init '''
         self.nStates     = nStates
         self.nTurns      = nTurns
@@ -112,7 +112,7 @@ class Agent2:
 
         ## calculate q
         Q = np.zeros( ( numStates, 2 ) )
-        for _ in range( self.epochs  ):
+        for _ in range( self.epochs ):
             newQ = np.zeros( ( numStates, 2 ) )
             for s in states:
                 for a in [ 0, 1 ]:
@@ -123,11 +123,61 @@ class Agent2:
         return Q
 
 
+class Agent3:
+    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, eps = 0.5, decay = 0.999, epochs = 1000 ):
+        self.env            = env
+        self.discountFactor = discountFactor
+        self.epochs         = epochs
+        self.eps            = eps
+        self.decay          = decay
+        self.learningRate   = learningRate
+
+    def learnPolicy( self ):
+        numStates   = self.env.getNumStates()
+        states      = list( range( numStates ) )
+        rSum        = np.zeros( ( numStates, 2, numStates ) ) ## sum of rewards collected
+        R           = np.zeros( ( numStates, 2, numStates ) ) ## expected reward
+        T           = np.zeros( ( numStates, 2, numStates ) ) ## counts transitions
+        P           = np.zeros( ( numStates, 2, numStates ) ) ## counts transition probabilities
+        Q           = np.zeros( ( numStates, 2 ) )
+
+        epoch = 0
+        s = self.env.reset()
+        while epoch < self.epochs:
+            beGreedy           = np.random.rand() < self.eps
+            if beGreedy:
+                a              = Q[ s ].argmax()
+            else:
+                a              = np.random.randint( 0, 2 )
+
+            r, sp, isDone      = self.env.step( a )
+            if isDone:
+                epoch         += 1
+                s              = self.env.reset()
+
+            T[ s, a, sp ]     += 1
+            rSum[ s, a, sp ]  += r
+
+            R[ s, a, sp ] = rSum[ s, a, sp ] / T[ s, a, sp ]
+
+            ## calculate transition probability matrtix
+            P[ s, a ] = T[ s, a ] / T[ s, a ].sum()
+
+
+            ## calculate q
+            Q[ s, a ] = ( 1 - self.learningRate ) * Q[ s, a ] \
+                              + self.learningRate * ( r + self.discountFactor * Q[ sp ].max() )
+
+            s                  = sp
+
+        return Q
+
+
 
 
 def main():
     e = Env()
-    agent = Agent2( e )
+    agent = Agent3( e )
     print ( agent.learnPolicy() )
 
 
