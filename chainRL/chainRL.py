@@ -124,7 +124,7 @@ class Agent2:
 
 
 class Agent3:
-    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, eps = 0.5, decay = 0.999, epochs = 1000 ):
+    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, eps = 0.1, decay = 0.99, epochs = 1000 ):
         self.env            = env
         self.discountFactor = discountFactor
         self.epochs         = epochs
@@ -145,6 +145,7 @@ class Agent3:
         s = self.env.reset()
         while epoch < self.epochs:
             beGreedy           = np.random.rand() < self.eps
+            self.eps          *= self.decay
             if beGreedy:
                 a              = Q[ s ].argmax()
             else:
