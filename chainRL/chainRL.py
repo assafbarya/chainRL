@@ -35,7 +35,7 @@ class Env:
 
     def reset( self ):
         self.state  = 0
-        self.turns = 0
+        self.turn   = 0
         return self.state
 
     def getNumStates( self ):
@@ -75,8 +75,12 @@ class Agent:
             return self.qMat
 
 
-class Agent2:
-    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, epochs = 1000 ):
+class AgentExploreThenCalculate:
+
+    def description( self ):
+        return 'An agent that first explores all the state-action-reward space, and then finds the optimal policy'
+
+    def __init__( self, env, discountFactor = 0.9, epochs = 100 ):
         self.env            = env
         self.discountFactor = discountFactor
         self.epochs         = epochs
@@ -123,8 +127,12 @@ class Agent2:
         return Q
 
 
-class Agent3:
-    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, eps = 0.1, decay = 0.99, epochs = 1000 ):
+class AgentTD0:
+
+    def description( self ):
+        return 'TD-0 Agent'
+
+    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, eps = 0.8, decay = 0.999, epochs = 100 ):
         self.env            = env
         self.discountFactor = discountFactor
         self.epochs         = epochs
@@ -134,17 +142,12 @@ class Agent3:
 
     def learnPolicy( self ):
         numStates   = self.env.getNumStates()
-        states      = list( range( numStates ) )
-        rSum        = np.zeros( ( numStates, 2, numStates ) ) ## sum of rewards collected
-        R           = np.zeros( ( numStates, 2, numStates ) ) ## expected reward
-        T           = np.zeros( ( numStates, 2, numStates ) ) ## counts transitions
-        P           = np.zeros( ( numStates, 2, numStates ) ) ## counts transition probabilities
         Q           = np.zeros( ( numStates, 2 ) )
 
         epoch = 0
         s = self.env.reset()
         while epoch < self.epochs:
-            beGreedy           = np.random.rand() < self.eps
+            beGreedy           = np.random.rand() > self.eps
             self.eps          *= self.decay
             if beGreedy:
                 a              = Q[ s ].argmax()
@@ -155,15 +158,6 @@ class Agent3:
             if isDone:
                 epoch         += 1
                 s              = self.env.reset()
-
-            T[ s, a, sp ]     += 1
-            rSum[ s, a, sp ]  += r
-
-            R[ s, a, sp ] = rSum[ s, a, sp ] / T[ s, a, sp ]
-
-            ## calculate transition probability matrtix
-            P[ s, a ] = T[ s, a ] / T[ s, a ].sum()
-
 
             ## calculate q
             Q[ s, a ] = ( 1 - self.learningRate ) * Q[ s, a ] \
@@ -178,8 +172,12 @@ class Agent3:
 
 def main():
     e = Env()
-    agent = Agent3( e )
-    print ( agent.learnPolicy() )
+
+    for agentType in [ AgentExploreThenCalculate, AgentTD0 ]:
+        e.reset()
+        agent = agentType( e )
+        print ( agent.description() )
+        print ( agent.learnPolicy() )
 
 
 
