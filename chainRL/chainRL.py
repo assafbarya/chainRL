@@ -3,11 +3,6 @@ import numpy as np
 import scipy.stats
 from enum import Enum
 
-#class Action( Enum ):
-#    DOWN = 0
-#    UP   = 1
-
-#    #STAY = 2
 
 class Env:
     ''' Chain game, with nStates states. 0,1,2,..nStates-1
@@ -22,7 +17,7 @@ class Env:
                   nTurns        = 1000,
                   downReward    = 2,
                   finalReward   = 10,
-                  errProb       = 0.4 ):
+                  errProb       = 0.1 ):
         ''' init '''
         self.nStates     = nStates
         self.nTurns      = nTurns
@@ -52,27 +47,6 @@ class Env:
         self.turn += 1
 
         return ( r, self.state, self.turn >= self.nTurns )
-
-class Agent:
-    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, epochs = 1000 ):
-        self.env            = env
-        self.discountFactor = discountFactor
-        self.learningRate   = learningRate
-        self.epochs         = epochs
-        self.qMat           = np.zeros( ( env.getNumStates(), 2 ) )
-
-    def learnPolicy( self ):
-        for _ in range( self.epochs ):
-            isDone = False
-            s = self.env.reset()
-            while not isDone:
-                a = np.random.randint( 0, 2 )
-                r, newState, isDone = self.env.step( a )
-                self.qMat[ s, a ] = ( 1 - self.learningRate ) * self.qMat[ s, a ] \
-                                    + self.learningRate * ( r + self.discountFactor * self.qMat[ newState ].max() )
-                s = newState
-
-            return self.qMat
 
 
 class AgentExploreThenCalculate:
@@ -132,7 +106,7 @@ class AgentTD0:
     def description( self ):
         return 'TD-0 Agent'
 
-    def __init__( self, env, discountFactor = 0.9, learningRate = 0.1, eps = 0.8, decay = 0.999, epochs = 100 ):
+    def __init__( self, env, discountFactor = 0.9, learningRate = 0.5, eps = 0.9, decay = 0.999, epochs = 100 ):
         self.env            = env
         self.discountFactor = discountFactor
         self.epochs         = epochs
@@ -147,7 +121,7 @@ class AgentTD0:
         epoch = 0
         s = self.env.reset()
         while epoch < self.epochs:
-            beGreedy           = np.random.rand() > self.eps
+            beGreedy           = ( np.random.rand() > self.eps ) and ( Q[ s ].sum() > 0 )
             self.eps          *= self.decay
             if beGreedy:
                 a              = Q[ s ].argmax()
