@@ -49,12 +49,12 @@ class Env:
         return ( r, self.state, self.turn >= self.nTurns )
 
 
-class AgentExploreThenCalculate:
+class AgentModelBased:
 
     def description( self ):
-        return 'An agent that first explores all the state-action-reward space, and then finds the optimal policy'
+        return 'A model based agent'
 
-    def __init__( self, env, discountFactor = 0.9, epochs = 100 ):
+    def __init__( self, env, discountFactor = 0.95, epochs = 100 ):
         self.env            = env
         self.discountFactor = discountFactor
         self.epochs         = epochs
@@ -106,7 +106,7 @@ class AgentTD0:
     def description( self ):
         return 'TD-0 Agent'
 
-    def __init__( self, env, discountFactor = 0.9, learningRate = 0.5, eps = 0.9, decay = 0.999, epochs = 100 ):
+    def __init__( self, env, discountFactor = 0.95, learningRate = 0.5, eps = 0.9, decay = 0.999, epochs = 100 ):
         self.env            = env
         self.discountFactor = discountFactor
         self.epochs         = epochs
@@ -142,12 +142,58 @@ class AgentTD0:
         return Q
 
 
+class AgentTDLambda:
+
+    def description( self ):
+        return 'TD-Lambda Agent'
+
+    def __init__( self, env, discountFactor = 0.95, learningRate = 0.5, eps = 0.9, decay = 0.999, epochs = 100, lambda_ = 0.4 ):
+        self.env            = env
+        self.discountFactor = discountFactor
+        self.epochs         = epochs
+        self.eps            = eps
+        self.decay          = decay
+        self.learningRate   = learningRate
+        self.lambda_        = lambda_ 
+
+    def learnPolicy( self ):
+        numStates   = self.env.getNumStates()
+        Q           = np.zeros( ( numStates, 2 ) )
+        E           = np.zeros( ( numStates, 2 ) )
+
+        epoch = 0
+        s = self.env.reset()
+        while epoch < self.epochs:
+
+            # decide on a step
+            beGreedy           = ( np.random.rand() > self.eps ) and ( Q[ s ].sum() > 0 )
+            self.eps          *= self.decay
+            if beGreedy:
+                a              = Q[ s ].argmax()
+            else:
+                a              = np.random.randint( 0, 2 )
+
+            
+            # make a step
+            r, sp, isDone      = self.env.step( a )
+            if isDone:
+                epoch         += 1
+                s              = self.env.reset()
+
+            ## calculate q
+            E[ s, a ]         += 1
+            inc                = self.learningRate * ( r + self.discountFactor * Q[ sp ].max() - Q[ s, a ] )
+            Q                 += inc * E
+            E                 *= self.lambda_ * self.discountFactor
+            s                  = sp
+
+        return Q
 
 
 def main():
     e = Env()
 
-    for agentType in [ AgentExploreThenCalculate, AgentTD0 ]:
+    for agentType in [ AgentModelBased, AgentTD0, AgentTDLambda ]:
         e.reset()
         agent = agentType( e )
         print ( agent.description() )
