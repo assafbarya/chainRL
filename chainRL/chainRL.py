@@ -198,7 +198,7 @@ def main():
         agent = agentType( e )
         print ( agent.description() )
         print ( agent.learnPolicy() )
-
+        print ( 'Test' )
 
 
 
