@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>045a4679-c949-49c6-948d-b4b39cb920bc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>chainRL.py</StartupFile>
+    <StartupFile>systemRun.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,8 +21,23 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="agentInterface.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="chainRL.py" />
     <Compile Include="env.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="qLambdaAgent.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="qZeroAgent.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="system.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="systemRun.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

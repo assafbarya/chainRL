@@ -32,6 +32,9 @@ class Env:
     def getNumStates( self ):
         return self.nStates
 
+    def getNumActions( self ):
+        return 2
+
     def step( self, a ):
         isErr = np.random.rand() < self.errProb
         if ( a == 1 ) ^ isErr: ## selected action is UP
@@ -39,7 +42,7 @@ class Env:
             self.state = min( self.maxState, self.state + 1 )
         else:
             self.state = 0
-            r          = 2
+            r          = self.downReward
         self.turn += 1
 
         return ( r, self.state, self.turn >= self.nTurns )
