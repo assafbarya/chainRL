@@ -28,6 +28,9 @@
     <Compile Include="env.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="neuralAgent.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="qLambdaAgent.py">
       <SubType>Code</SubType>
     </Compile>

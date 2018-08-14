@@ -8,12 +8,11 @@ class QZeroAgent( AgentInterface ):
 
     def __init__( self, numStates, numActions, discountFactor = 0.95, learningRate = 0.5, eps = 0.9, decay = 0.999 ):
         self.discountFactor = discountFactor
+        self.numActions     = numActions
         self.eps            = eps  ## epsilon greedy coefficient
         self.decay          = decay ## decay of the epsilon greedy
         self.learningRate   = learningRate
-        self.numStates      = numStates
-        self.numActions     = numActions
-        self.Q              = np.zeros( ( self.numStates, self.numActions ) )
+        self.Q              = np.zeros( ( numStates, numActions ) )
         self.lastAction     = None
 
     def setState( self, state ):

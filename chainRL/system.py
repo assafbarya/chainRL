@@ -31,6 +31,7 @@ class System( object ):
         avgGameScore = np.zeros( self.numGames )
         for game in range( self.numGames ):
             avgGameScore[ game ] = self.playGame()
+            print( game )
 
         self.agent.printInternalState()
 
