@@ -1,6 +1,7 @@
 import numpy as np
+from envInterface import EnvInterface
 
-class Env:
+class ChainEnv( EnvInterface ):
     ''' Chain game, with nStates states. 0,1,2,..nStates-1
         At each point the player can chose to go up or down
         With errProb, the player goes in the opposite direction of the intentional one

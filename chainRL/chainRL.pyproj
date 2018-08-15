@@ -25,7 +25,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="chainRL.py" />
-    <Compile Include="env.py">
+    <Compile Include="chainEnv.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="envInterface.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="neuralAgent.py">

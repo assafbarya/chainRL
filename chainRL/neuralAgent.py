@@ -12,8 +12,8 @@ class NeuralAgent( AgentInterface ):
                     numStates, 
                     numActions, 
                     discountFactor = 0.95, 
-                    eps            = 0.5, 
-                    decay          = 0.999 ): 
+                    eps            = 0.3, 
+                    decay          = 0.9999 ): 
         self.discountFactor = discountFactor
         self.numActions     = numActions
         self.numStates      = numStates
