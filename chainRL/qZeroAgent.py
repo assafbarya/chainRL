@@ -6,7 +6,7 @@ class QZeroAgent( AgentInterface ):
     def description( self ):
         return 'Q(0) Agent'
 
-    def __init__( self, numStates, numActions, discountFactor = 0.95, learningRate = 0.3, eps = 0.6, decay = 0.999 ):
+    def __init__( self, numStates, numActions, discountFactor = 0.97, learningRate = 0.3, eps = 0.6, decay = 0.999 ):
         self.discountFactor = discountFactor
         self.numActions     = numActions
         self.eps            = eps  ## epsilon greedy coefficient

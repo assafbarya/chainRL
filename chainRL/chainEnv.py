@@ -14,7 +14,7 @@ class ChainEnv( EnvInterface ):
                   nTurns        = 1000,
                   downReward    = 2,
                   finalReward   = 10,
-                  errProb       = 0.1 ):
+                  errProb       = 0.2 ):
         ''' init '''
         self.nStates     = nStates
         self.nTurns      = nTurns

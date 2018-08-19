@@ -18,7 +18,7 @@ class WatchOutEnv( EnvInterface ):
         out, and reduce inventory
 
     '''
-    def __init__( self, nTurns = 1000, crashProb = 0.05, nX = 3, nY = 4, hit = -40 ):
+    def __init__( self, nTurns = 1000, crashProb = 0.01, nX = 4, nY = 6, hit = -40 ):
         self.nTurns    = nTurns
         self.crashProb = crashProb
         self.nX        = nX

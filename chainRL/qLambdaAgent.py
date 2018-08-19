@@ -6,7 +6,7 @@ class QLambdaAgent( AgentInterface ):
     def description( self ):
         return 'Q(lambda) Agent'
 
-    def __init__( self, numStates, numActions, discountFactor = 0.95, learningRate = 0.2, eps = 0.6, decay = 0.999, lambda_ = 0.2 ):
+    def __init__( self, numStates, numActions, discountFactor = 0.95, learningRate = 0.1, eps = 0.7, decay = 0.9999, lambda_ = 0.3 ):
         self.discountFactor = discountFactor
         self.numActions     = numActions
         self.eps            = eps  ## epsilon greedy coefficient
