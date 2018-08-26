@@ -31,6 +31,9 @@
     <Compile Include="envInterface.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="exploreThenExploitAgent.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="neuralAgent.py">
       <SubType>Code</SubType>
     </Compile>
