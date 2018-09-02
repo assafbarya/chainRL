@@ -21,6 +21,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="actionSelectorInterface.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="agentInterface.py">
       <SubType>Code</SubType>
     </Compile>
@@ -29,6 +32,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="envInterface.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="epsGreedySelector.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="exploreThenExploitAgent.py">
@@ -41,6 +47,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="qZeroAgent.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="softMaxSelector.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="system.py">

@@ -5,9 +5,16 @@ from qLambdaAgent import QLambdaAgent
 from chainEnv import ChainEnv
 from watchOutEnv import WatchOutEnv
 from exploreThenExploitAgent import ExploreThenExploitAgent
+from epsGreedySelector import EpsGreedySelector
+from softMaxSelector import SoftMaxSelector
 
 def main():
-    sys = System( WatchOutEnv, ExploreThenExploitAgent, 100 )
+
+    sys = System( envType            = ChainEnv, 
+                  agentType          = QLambdaAgent, 
+                  numGames           = 100,
+                  actionSelectorType = SoftMaxSelector )
+
     sys.analyzeAgent()
 
 

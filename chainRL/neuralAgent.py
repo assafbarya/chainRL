@@ -11,14 +11,12 @@ class NeuralAgent( AgentInterface ):
     def __init__(   self, 
                     numStates, 
                     numActions, 
-                    discountFactor = 0.95, 
-                    eps            = 0.6, 
-                    decay          = 0.9999 ): 
+                    actionSelectorType, 
+                    discountFactor = 0.95 ):
+
         self.discountFactor = discountFactor
         self.numActions     = numActions
         self.numStates      = numStates
-        self.eps            = eps  ## epsilon greedy coefficient
-        self.decay          = decay ## decay of the epsilon greedy
         self.model          = Sequential()
 
         self.model.add( InputLayer( batch_input_shape = ( 1, numStates ) ) )
@@ -26,7 +24,8 @@ class NeuralAgent( AgentInterface ):
         self.model.add( Dense( numActions, activation = 'linear' ) )
         self.model.compile( loss = 'mse', optimizer = 'adam', metrics = [ 'mae' ] )
 
-        self.stateRep = np.identity( numStates )
+        self.stateRep       = np.identity( numStates )
+        self.actionSelector = actionSelectorType()
 
     def _getStateRepr( self, state ):
         return self.stateRep[ state : state + 1 ]
@@ -38,13 +37,7 @@ class NeuralAgent( AgentInterface ):
         self.state = state
 
     def getAction( self ):
-        beGreedy        = ( np.random.rand() > self.eps ) 
-        self.eps       *= self.decay
-        if beGreedy: 
-            action      = np.argmax( self._getModelPredictions( self.state ) )
-        else: 
-            action      = np.random.randint( self.numActions )
-
+        action          = self.actionSelector.getAction( self._getModelPredictions( self.state ) )
         self.lastAction = action
         return action
 
@@ -55,7 +48,6 @@ class NeuralAgent( AgentInterface ):
         target_vec                    = target_vec.reshape( -1, 2 )
 
         self.model.fit( self._getStateRepr( self.state ), target_vec, epochs = 1, verbose = 0 )
-        #self.model.fit( self._getStateRepr( self.state ), target_vec, epochs = 1 )
         self.state = nextState
 
     def printInternalState( self ):

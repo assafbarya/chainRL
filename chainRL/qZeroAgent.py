@@ -6,27 +6,26 @@ class QZeroAgent( AgentInterface ):
     def description( self ):
         return 'Q(0) Agent'
 
-    def __init__( self, numStates, numActions, discountFactor = 0.97, learningRate = 0.3, eps = 0.6, decay = 0.999 ):
+    def __init__(   self, 
+                    numStates, 
+                    numActions,
+                    actionSelectorType, 
+                    discountFactor = 0.95, 
+                    learningRate = 0.1 ):
+
         self.discountFactor = discountFactor
         self.numActions     = numActions
-        self.eps            = eps  ## epsilon greedy coefficient
-        self.decay          = decay ## decay of the epsilon greedy
         self.learningRate   = learningRate
         self.Q              = np.zeros( ( numStates, numActions ) )
         self.lastAction     = None
+        self.actionSelector = actionSelectorType()
 
     def setState( self, state ):
         self.state          = state
 
     def getAction( self ):
-        beGreedy            = ( np.random.rand() > self.eps ) and ( self.Q[ self.state ].sum() > 0 )
-        self.eps           *= self.decay
-        if beGreedy: 
-            action          = self.Q[ self.state ].argmax()
-        else: 
-            action          = np.random.randint( self.numActions )
-
-        self.lastAction     = action
+        action          = self.actionSelector.getAction( self.Q[ self.state ] )
+        self.lastAction = action
         return action
 
     def update( self, nextState, reward ):

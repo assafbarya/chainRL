@@ -4,11 +4,13 @@ from matplotlib import pyplot as plt
 class System( object ):
     """runs the agent with the env, analyses results"""
 
-    def __init__( self, envType, agentType, numGames ):
+    def __init__( self, envType, agentType, numGames, **kwargs ):
         self.env      = envType()
         numActions    = self.env.getNumActions()
         numStates     = self.env.getNumStates()
-        self.agent    = agentType( numStates, numActions )
+        self.agent    = agentType( numStates  = numStates, 
+                                   numActions = numActions, 
+                                   **kwargs )
         self.numGames = numGames
 
     def playGame( self ):
