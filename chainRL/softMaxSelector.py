@@ -11,12 +11,13 @@ class SoftMaxSelector( ActionSelectorInterface ):
         self.minTemp      = minTemp
 
     def getAction( self, actionValues ):
-        if actionValues.prod() == 0: ## act randomly until all actions have non zero values
-                                     ## since in the softmax function it will have zero prob
+        ## act randomly until all actions have non zero values, or if all values are equal
+        ## since in the softmax function it will have zero prob
+        if ( actionValues.prod() == 0 ) or ( actionValues.var() == 0 ):
             return np.random.randint( actionValues.size )
         warnings.simplefilter("error", RuntimeWarning)
         try:
-            normVals   = actionValues / np.abs( actionValues.max() )
+            normVals   =  actionValues / actionValues.max()
             weights    = np.exp( normVals / self.temp )
             probs      = weights / weights.sum()
             cs         = np.concatenate( [ np.array( [ 0 ] ), probs.cumsum()[ : -1 ] ] )

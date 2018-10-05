@@ -10,10 +10,10 @@ from softMaxSelector import SoftMaxSelector
 
 def main():
 
-    sys = System( envType            = ChainEnv, 
+    sys = System( envType            = WatchOutEnv, 
                   agentType          = QLambdaAgent, 
                   numGames           = 100,
-                  actionSelectorType = SoftMaxSelector )
+                  actionSelectorType = EpsGreedySelector )
 
     sys.analyzeAgent()
 
